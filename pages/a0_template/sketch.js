@@ -4,7 +4,6 @@ function setup() {
   }
   
   function draw() {
-    // Use a very dark background so the "additive" glow is visible
     background(10); 
   
     let hr = hour();
@@ -12,36 +11,40 @@ function setup() {
     let sec = second();
   
     // Map time to RGB (0-255)
-    let r = map(hr, 0, 23, 0, 255);
+    // hr % 12 ensures the red shade cycles every 12 hours
+    let r = map(hr % 12, 0, 11, 0, 255); 
     let g = map(min, 0, 59, 0, 255);
     let b = map(sec, 0, 59, 0, 255);
   
     translate(width / 2, height / 2);
-    rotate(-90);
   
-    // Set blend mode to ADD for color mixing
+    // --- CENTER CIRCLE (The Combined Color) ---
+    push(); 
+    noStroke();
+    fill(r, g, b); // The unique color of this exact second
+    ellipse(0, 0, 100, 100); 
+    pop(); 
+  
+    rotate(-90);
     blendMode(ADD); 
     noFill();
-    
-    // Make the lines thick so they overlap significantly
-    strokeWeight(80); 
-    let transparency = 150; // 0 is invisible, 255 is solid
+    strokeWeight(60); 
+    let transparency = 150;
   
-    // --- HOUR CIRCLE (Red) ---
+    // --- HOUR RING (Red) ---
     let hrAngle = map(hr % 12, 0, 12, 0, 360);
     stroke(r, 0, 0, transparency); 
     arc(0, 0, 300, 300, 0, hrAngle);
   
-    // --- MINUTE CIRCLE (Green) ---
+    // --- MINUTE RING (Green) ---
     let minAngle = map(min, 0, 60, 0, 360);
     stroke(0, g, 0, transparency); 
-    arc(0, 0, 280, 280, 0, minAngle); // Slightly smaller to create overlap area
+    arc(0, 0, 260, 260, 0, minAngle);
   
-    // --- SECOND CIRCLE (Blue) ---
+    // --- SECOND RING (Blue) ---
     let secAngle = map(sec, 0, 60, 0, 360);
     stroke(0, 0, b, transparency); 
-    arc(0, 0, 260, 260, 0, secAngle); // Even smaller for more overlap
+    arc(0, 0, 220, 220, 0, secAngle);
   
-    // Reset blend mode so other elements (like text) aren't affected
     blendMode(BLEND); 
   }
